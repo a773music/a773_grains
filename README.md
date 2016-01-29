@@ -5,7 +5,7 @@ github: https://github.com/attejensen/grains
 
 Clock multiplier/divider (mult_div)
 -
-https://www.instagram.com/p/BBI0L4PmHXQ/?taken-by=a773music
+https://www.instagram.com/p/BBI0L4PmHXQ/
 
 Features:  
 * CV controllable clock multiplication/division  
