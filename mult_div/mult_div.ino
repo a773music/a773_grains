@@ -1,9 +1,25 @@
+/*
+Alternate firmware for the ginky synthese grains eurorack module
+Code by a773 (atte.dk) and released under the GPL licence
+*/
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 
-
 #define TRIGGER_LENGTH 10
+#define UPPER_POT       2
+#define MIDDLE_POT      1
+#define LOWER_POT       0
+#define CLOCK_IN        3
+#define UPPER_POT_MAX   500
+#define MIDDLE_POT_MAX   500
+#define LOWER_POT_MAX   500
+#define NB_POT_SLICES 4
+#define MODE_SIMPLE 0
+#define MODE_COMPLEX 1
+#define PWM_PIN       11
+
 long variable_trigger_length;
 long last_trigger_in = 0;
 long last_trigger_out = 0;
@@ -21,20 +37,6 @@ float factor = 0;
 
 int simple_factors[10] = {1,2,4,8,16,32,64,128,256,512};
 int complex_factors[10] = {1,3,5,7,11,13,17,19,23,29};
-
-#define UPPER_POT       2
-#define MIDDLE_POT      1
-#define LOWER_POT       0
-#define CLOCK_IN        3
-
-#define UPPER_POT_MAX   500
-#define MIDDLE_POT_MAX   500
-#define LOWER_POT_MAX   500
-#define NB_POT_SLICES 4
-#define MODE_SIMPLE 0
-#define MODE_COMPLEX 1
-
-#define PWM_PIN       11
 
 
 void setup() 
@@ -61,12 +63,16 @@ int get_div(int mode){
   return slice2factor(slice,mode);
 }
 
+long get_time(){
+  return millis();
+}
+
 void loop() 
 {
   int gate = analogRead(CLOCK_IN);
   int reset = analogRead(LOWER_POT);
   
-  now = millis();
+  now = get_time();
   edge = false;
   // detect gate in
   if (gate > 32) {
@@ -124,7 +130,7 @@ void loop()
   }
   
   // reduce trigger length if going real fast
-  if(time_between_outs <= TRIGGER_LENGTH / 2){
+  if(time_between_outs <= TRIGGER_LENGTH * 2){
     variable_trigger_length = time_between_outs / 2;
   } else {
     variable_trigger_length = TRIGGER_LENGTH;
