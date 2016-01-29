@@ -1,6 +1,7 @@
 Alternate firmware for the ginko synthese grains eurorack module
-http://www.ginkosynthese.com/product/grains/
 -
+http://www.ginkosynthese.com/product/grains/
+
 Code by a773 (atte.dk) and released under the GPL licence.  
 github: https://github.com/attejensen/grains
 
