@@ -27,11 +27,14 @@ long now = 0;
 long time_between_ins = 0;
 long time_between_outs = 0;
 int  nb_triggs = 0;
+int  edge_skipper = 1;
 
 boolean in_clock_high = false;
 boolean stopped = false;
 boolean out_clock_high = false;
 boolean edge = false;
+boolean getting_triggers = true;
+
 
 int mode = -1;
 float factor = 0;
@@ -61,6 +64,7 @@ int get_mult(int mode){
 
 int get_div(int mode){
   int slice = analogRead(MIDDLE_POT) * (NB_POT_SLICES-1) / MIDDLE_POT_MAX;
+//  return 4;
   return slice2factor(slice,mode);
 }
 
@@ -83,22 +87,32 @@ void loop()
   
   now = get_time();
   edge = false;
+  
 
   // detect gate in
   if (gate > 32) {
     if (!in_clock_high) {
-      edge = true;
       if(last_trigger_in != 0){
         time_between_ins = now - last_trigger_in;
       }
+      getting_triggers = time_between_ins < 1000 ? true:false;
       last_trigger_in = now;
+      
+      if(!getting_triggers){
+        edge_skipper = 0;
+      } else {
+        edge_skipper = (edge_skipper + 1) % get_div(mode);
+      }
+      if(edge_skipper == 0){
+        edge = true;
+      }
+      
     }
     in_clock_high = true;
   } else {
     in_clock_high = false;
   }
   
-
   // detect reset/mode
   if (reset < LOWER_POT_MAX/3) {
     // CCW simple mode
@@ -119,8 +133,9 @@ void loop()
   }
 
   // setup mult and div
-  if(edge){
-    time_between_outs = int(time_between_ins * get_div(mode) / get_mult(mode));
+  if(edge && getting_triggers){
+    // only update if triggers faster than 1 second
+    time_between_outs = time_between_ins / get_mult(mode);
   }
 
 
@@ -129,18 +144,8 @@ void loop()
   if(time_between_ins > 0 && !stopped){
     if(nb_triggs <= 1 && edge){
       trigger();
-      if(mode == MODE_SIMPLE){
-        //nb_triggs = max(int((get_mult(mode) ) / get_div(mode)), 1);
-        nb_triggs = get_mult(mode) / get_div(mode);
-      } else {
-        nb_triggs = get_mult(mode) * get_div(mode) + 1;
-      }
-      //nb_triggs = 4;
-    //}
-     //else if(last_trigger_out == 0 && edge){
-       //trigger();
-       //nb_triggs--;
-     } else if(now - last_trigger_out >= time_between_outs){
+      nb_triggs = get_mult(mode);
+     } else if(now - last_trigger_out >= time_between_outs * get_div(mode)){
        if(nb_triggs > 1){
          trigger();
          nb_triggs--;
