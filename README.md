@@ -30,3 +30,12 @@ Clock in
 
 Out  
 Clock out
+
+Square wave oscillator
+-
+https://www.instagram.com/p/BEbCrmOGHaN/
+
+Features:
+* 5 octave range, lowest note C2
+* In tune with Pot 3 CCW, fully CW is one octave up
+* Pot 1 turns quantization to semitones on/off (CW/CCW)
