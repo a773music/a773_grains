@@ -1,7 +1,7 @@
 Alternate firmware for the ginko synthese grains eurorack module
-
-NOTE: Although I can't imagine this damaging your grains module, you install this at your own risk!
 -
+NOTE: Although I can't imagine this damaging your grains module, you install this at your own risk!
+--
 http://www.ginkosynthese.com/product/grains/
 
 Code by a773 (atte.dk) and released under the GPL licence.  
