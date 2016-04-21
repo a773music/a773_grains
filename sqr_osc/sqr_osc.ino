@@ -1,4 +1,3 @@
-
 /*
 Alternate firmware for the ginky synthese grains eurorack module
 Code by a773 (atte.dk) and released under the GPL licence
@@ -43,33 +42,23 @@ NOT power from USB and rack at the same time, since this might blow up your modu
 
 // stuff used for smoothing
 #define NB_SMOOTHING       5
-float readings[NB_SMOOTHING];     // the readings from the analog input
-int readIndex = 0;                // the index of the current reading
-float total = 0;                  // the running total
-float average = 0;                // the average
+float readings[NB_SMOOTHING];
+int readIndex = 0;
+float total = 0;
+float average = 0;
 
 float freq;
 float volt;
 
 float smooth(float value_to_smooth){
-  // subtract the last reading:
   total = total - readings[readIndex];
-  // read from the sensor:
   readings[readIndex] = value_to_smooth;
-  // add the reading to the total:
   total = total + readings[readIndex];
-  // advance to the next position in the array:
   readIndex = readIndex + 1;
-
-  // if we're at the end of the array...
   if (readIndex >= NB_SMOOTHING) {
-    // ...wrap around to the beginning:
     readIndex = 0;
   }
-
-  // calculate the average:
   average = total / NB_SMOOTHING;
-
   return average;
 }
 
